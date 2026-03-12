@@ -1,8 +1,5 @@
 
-// const WatchLater = require("../Models/WatchLater.js");
-
 const downloads = require("../Models/Download");
-const LikedVidoSchema = require("../Models/LikedVideos");
 const PlaylistSchema = require("../Models/Playlist");
 const user = require("../Models/User_Auth");
 const video = require("../Models/Video");
@@ -52,7 +49,7 @@ exports.uploadvideo = async (req, res) => {
       status: true,
       msg: "Uploaded a video..!",
       _data: result,
-      image_url: "http://localhost:5000"
+      image_url: "https://youtube-server-omega.vercel.app"
     }
     return res.send(obj)
   } catch (error) {
@@ -97,7 +94,7 @@ exports.getallvideos = async (request, response) => {
       status: true,
       msg: "Videos fetched successfully",
       _data: videos,
-      image_url: "http://localhost:5000"
+      image_url: "https://youtube-server-omega.vercel.app"
     };
     return response.send(obj);
   } catch (error) {
@@ -152,7 +149,7 @@ exports.getSearchedVideos = async (req, res) => {
       status: true,
       msg: "Videos found..!",
       _data: existingvideos,
-      image_url: "http://localhost:5000/uploads/videos/"
+      image_url: "https://youtube-server-omega.vercel.app/uploads/videos/"
     }
     return res.send(obj)
 
@@ -189,7 +186,7 @@ exports.viewVideo = async (request, response) => {
       status: true,
       msg: "Video Found..!",
       _data: updated,
-      image_url: "http://localhost:5000"
+      image_url: "https://youtube-server-omega.vercel.app"
     }
     return response.send(obj)
   }
@@ -451,7 +448,7 @@ exports.createPlaylist = async (request, response) => {
       status: true,
       msg: "This Playlist Created & Videos Added Successfully...!",
       _data: playlistresult,
-      imagepath: "http://localhost:5000/uploads/videos/playlists/"
+      imagepath: "https://youtube-server-omega.vercel.app/uploads/videos/playlists/"
     }
     return response.send(obj)
   } catch (error) {
@@ -495,7 +492,7 @@ exports.viewAllPlaylistByUserId = async (request, response) => {
       status: true,
       msg: "User playlist found successfully...!",
       _data: playlistdata,
-      imagepath: "http://localhost:5000/uploads/videos/playlists/"
+      imagepath: "https://youtube-server-omega.vercel.app/uploads/videos/playlists/"
     }
     return response.send(obj)
   } catch (error) {
@@ -558,7 +555,7 @@ exports.updatePlaylist = async (request, response) => {
       status: true,
       msg: "Playlist updated successfully...!",
       _data: updateplaylist,
-      imagepath: "http://localhost:5000/uploads/videos/playlists/"
+      imagepath: "https://youtube-server-omega.vercel.app/uploads/videos/playlists/"
     }
     return response.send(obj)
   } catch (error) {
@@ -595,7 +592,7 @@ exports.viewAllVideosInPlaylist = async (request, response) => {
       status: true,
       msg: "These videos are available in this playlist...!",
       _data: viewallvideoinplaylist,
-      imagepath: "http://localhost:5000/uploads/videos/playlists/"
+      imagepath: "https://youtube-server-omega.vercel.app/uploads/videos/playlists/"
     }
     return response.send(obj)
   } catch (error) {
@@ -697,7 +694,7 @@ exports.deletePlaylist = async (request, response) => {
     if (!existplaylist) {
       const obj = {
         status: false,
-        msg: "Playliat Not found...!",
+        msg: "Playlist Not found...!",
         _data: ''
       }
       return response.send(obj)
@@ -1028,7 +1025,7 @@ exports.viewAllVideosInWatchLater = async (request, response) => {
       status: true,
       msg: "Watch Later with this User Found Successfully....!",
       _data: existingwatchleter,
-      imagepath: "http://localhost:5000/uploads/"
+      imagepath: "https://youtube-server-omega.vercel.app/uploads/"
     }
 
     return response.send(obj)
@@ -1079,7 +1076,7 @@ exports.viewLikedVideos = async (request, response) => {
       status: true,
       msg: "Liked Videos with this User Found Successfully....!",
       _data: existinglikedvideos,
-      imagepath: "http://localhost:5000/uploads/"
+      imagepath: "https://youtube-server-omega.vercel.app/uploads/"
     }
 
     return response.send(obj)
@@ -1269,7 +1266,7 @@ exports.incrementVideoViews = async (request, response) => {
       status: true,
       msg: "Video view count incremented successfully..!",
       _data: updatedVideo,
-      image_url: "http://localhost:5000"
+      image_url: "https://youtube-server-omega.vercel.app"
     }
     return response.send(obj)
   } catch (error) {

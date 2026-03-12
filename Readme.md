@@ -2,7 +2,7 @@
 
 ## Base URL
 ```
-http://localhost:5000/api/auth
+https://youtube-server-omega.vercel.app/api/auth
 ```
 
 ## Authentication Endpoints
@@ -295,44 +295,6 @@ Authorization: Bearer your_jwt_token_here
 ## Usage Examples
 
 ### Frontend Integration
-
-```javascript
-// Register user
-const registerUser = async (userData) => {
-  const response = await fetch('/api/auth/register', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userData)
-  });
-  return response.json();
-};
-
-// Login user
-const loginUser = async (credentials) => {
-  const response = await fetch('/api/auth/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(credentials)
-  });
-  return response.json();
-};
-
-// Get profile (with token)
-const getProfile = async (token) => {
-  const response = await fetch('/api/auth/profile', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    }
-  });
-  return response.json();
-};
-```
 
 ## Environment Variables
 

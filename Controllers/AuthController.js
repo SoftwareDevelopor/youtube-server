@@ -122,7 +122,7 @@ exports.getallusers = async (request, response) => {
       status: true,
       msg: "Users fetched successfully",
       _data: users,
-      imagepath:"http://localhost:5000/uploads/users/"
+      imagepath:"https://youtube-server-omega.vercel.app/uploads/users/"
     }
     return response.send(obj)
   } catch (error) {
@@ -163,7 +163,7 @@ exports.viewProfile = async (request, response) => {
       status: true,
       msg: "User profile fetched successfully",
       _data: userdata,
-      image_url: "http://localhost:5000/uploads/users/"
+      image_url: "https://youtube-server-omega.vercel.app/uploads/users/"
     }
     return response.send(objectdata)
   } catch (error) {
@@ -783,7 +783,7 @@ exports.viewprofileById = async (request, response) => {
       status:true,
       msg:"User Found...!",
       _data:userfindbyId,
-      imagepath:"http://localhost:5000/uploads/users/"
+      imagepath:"https://youtube-server-omega.vercel.app/uploads/users/"
     }
     return response.send(obj)
   } catch (error) {
