@@ -56,7 +56,7 @@ exports.uploadvideo = async (req, res) => {
     }
     return res.send(obj)
   } catch (error) {
-    console.log(error)
+    
     return res.send({
       status: false,
       msg: "Something went wrong..!",
@@ -101,7 +101,7 @@ exports.getallvideos = async (request, response) => {
     };
     return response.send(obj);
   } catch (error) {
-    console.log('Get all videos error:', error);
+    
     return response.send({
       status: false,
       msg: "Something went wrong while fetching videos",
@@ -157,7 +157,11 @@ exports.getSearchedVideos = async (req, res) => {
     return res.send(obj)
 
   } catch (error) {
-    console.log(error)
+    return res.send({
+      status: false,
+      msg: "Something went wrong..!",
+      _data: error
+    })
   }
 }
 
@@ -242,7 +246,11 @@ exports.addComments = async (request, response) => {
     return response.send(obj)
 
   } catch (error) {
-    console.log(error)
+    return response.send({
+      status: false,
+      msg: "Something went wrong...!",
+      _data: error
+    })
   }
 }
 
@@ -324,7 +332,11 @@ exports.incrementsLike = async (request, response) => {
     }
     return response.send(obj)
   } catch (error) {
-    console.log(error)
+    return response.send({
+      status: false,
+      msg: "Something went wrong...!",
+      _data: error
+    })
   }
 };
 
@@ -365,7 +377,6 @@ exports.decrementsLike = async (request, response) => {
       }
       return response.send(obj)
     }
-    console.log(existingVideo.likedBy.includes(videodisLikedByUsersIds))
     if (!existingVideo.likedBy.includes(videodisLikedByUsersIds)) {
       const obj = {
         status: false,
@@ -396,7 +407,11 @@ exports.decrementsLike = async (request, response) => {
     }
     return response.send(obj)
   } catch (error) {
-    console.log(error)
+    return response.send({
+      status: false,
+      msg: "Something went wrong...!",
+      _data: error
+    })
   }
 };
 
@@ -440,7 +455,11 @@ exports.createPlaylist = async (request, response) => {
     }
     return response.send(obj)
   } catch (error) {
-    console.log(error)
+    return response.send({
+      status: false,
+      msg: "Something went wrong...!",
+      _data: error
+    })
   }
 }
 
@@ -480,7 +499,11 @@ exports.viewAllPlaylistByUserId = async (request, response) => {
     }
     return response.send(obj)
   } catch (error) {
-    console.log(error)
+    return response.send({
+      status: false,
+      msg: "Something went wrong...!",
+      _data: error
+    })
   }
 }
 
@@ -539,7 +562,11 @@ exports.updatePlaylist = async (request, response) => {
     }
     return response.send(obj)
   } catch (error) {
-    console.log(error)
+    return response.send({
+      status: false,
+      msg: "Something went wrong...!",
+      _data: error
+    })
   }
 }
 
@@ -572,7 +599,6 @@ exports.viewAllVideosInPlaylist = async (request, response) => {
     }
     return response.send(obj)
   } catch (error) {
-    console.log(error)
     return response.send({
       status: false,
       msg: "Something wentwrong...!",
@@ -645,7 +671,6 @@ exports.deleteVideosInPlaylist = async (request, response) => {
     return response.send(obj)
 
   } catch (error) {
-    console.log(error)
     return response.send({
       status: false,
       msg: "Something went wrong...!",
@@ -695,7 +720,6 @@ exports.deletePlaylist = async (request, response) => {
     return response.send(obj)
 
   } catch (error) {
-    console.log(error)
     return response.send({
       status: false,
       msg: "Something went wrong...!",
@@ -749,7 +773,6 @@ exports.deleteVideo = async (request, response) => {
     }
 
   } catch (error) {
-    console.log(error)
     return response.send({
       status: false,
       msg: "Something went wrong...!",
@@ -806,14 +829,9 @@ exports.addVideosInwatchLater = async (request, response) => {
 
   let existwatchlater = await WatchLaterSchema.findOne({ userId: userid })
 
-  console.log("existed user:-- ", existwatchlater)
-
   let existWatchlaterVideo = await WatchLaterSchema.findOne({ videos: videoidInWatchlater })
 
-  console.log("existed watchlater video:-- ", existWatchlaterVideo)
-
   let existingWatchLater = await WatchLaterSchema.findOne({ userId: userid, videos: videoidInWatchlater })
-  // console.log("existed watch later:-- ", existingWatchLater)
 
   if (existwatchlater) {
     if (!existingWatchLater) {
@@ -864,7 +882,6 @@ exports.addVideosInwatchLater = async (request, response) => {
     return response.send(obj)
 
   } catch (error) {
-    console.log(error)
     return response.send({
       status: false,
       msg: "Somethg went wrong...!",
@@ -1017,7 +1034,6 @@ exports.viewAllVideosInWatchLater = async (request, response) => {
     return response.send(obj)
 
   } catch (error) {
-    console.log(error)
     return response.send({
       status: false,
       msg: "Something went wrong....!",
@@ -1069,7 +1085,11 @@ exports.viewLikedVideos = async (request, response) => {
     return response.send(obj)
 
   } catch (error) {
-    console.log(error)
+    return response.send({
+      status: false,
+      msg: "Something went wrong....!",
+      _data: null
+    })
   }
 }
 
@@ -1135,7 +1155,6 @@ exports.downloadVideo = async (request, response) => {
       existingvideo.videofile,
       async (error) => {
         if (error) {
-          console.log(error)
           if (!response.headersSent) {
             return response.send({
               status: false,
@@ -1205,7 +1224,11 @@ exports.viewDownloadedVideo = async (request, response) => {
     return response.send(obj)
 
   } catch (error) {
-    console.log(error)
+    return response.send({
+      status: false,
+      msg: "Something went wrong...!",
+      _data: error
+    })
   }
 }
 
@@ -1250,7 +1273,6 @@ exports.incrementVideoViews = async (request, response) => {
     }
     return response.send(obj)
   } catch (error) {
-    console.log(error)
     return response.send({
       status: false,
       msg: "Something went wrong while incrementing video views",

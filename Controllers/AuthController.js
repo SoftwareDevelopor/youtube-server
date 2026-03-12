@@ -474,8 +474,6 @@ exports.resetPassword = async (request, response) => {
       });
     }
 
-
-
     let newPassword = request.body.new_password;
     let confirmPassword = request.body.confirm_password;
     if (!newPassword || !confirmPassword) {
@@ -657,9 +655,17 @@ exports.subscribe = async (request, response) => {
 
     await transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.error('Error sending email:', error);
+        return response.send({
+          status: false,
+          msg: "Channel subscribed successfully, but failed to send email notification.",
+          _data: null
+        })
       } else {
-        console.log('Email sent:', info.response);
+        return response.send({
+          status: true,
+          msg: "Channel subscribed successfully, and email notification sent.",
+          _data: null
+        })
       }
     });
 
@@ -671,7 +677,6 @@ exports.subscribe = async (request, response) => {
     }
     response.send(obj)
   } catch (error) {
-    console.log(error)
     response.send({
       status: false,
       msg: "Error subscribing to channel",
@@ -745,7 +750,6 @@ exports.desubscribe = async (request, response) => {
     }
     response.send(obj)
   } catch (error) {
-    console.log(error)
     const obj = {
       status: false,
       msg: "Something went wrong...!",
@@ -783,7 +787,12 @@ exports.viewprofileById = async (request, response) => {
     }
     return response.send(obj)
   } catch (error) {
-    console.log(error)
+    const obj={
+      status:false,
+      msg:"Something went wrong...!",
+      _data:error
+    }
+    return response.send(obj)
   }
 }
 
