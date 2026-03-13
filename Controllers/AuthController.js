@@ -56,7 +56,7 @@ exports.register = async (request, response) => {
     const output = {
       status: false,
       msg: "Something went wrong",
-      _data: error,
+      _data: null,
       errorMsg: errormessages,
     };
     return response.send(output);
@@ -65,47 +65,59 @@ exports.register = async (request, response) => {
 
 exports.login = async (request, response) => {
 
-  let loginobj = {
-    email: request.body.email,
-    password: request.body.password
-  }
-  const existingUser = await user.findOne({ email: loginobj.email, deleted_at: null })
-  if (!existingUser) {
+  try {
+
+
+    let loginobj = {
+      email: request.body.email,
+      password: request.body.password
+    }
+    const existingUser = await user.findOne({ email: loginobj.email, deleted_at: null })
+    if (!existingUser) {
+      const obj = {
+        status: false,
+        msg: "User not found",
+        _data: null
+      }
+      return response.send(obj)
+    }
+
+    const isMatch = await bcrypt.compare(loginobj.password, existingUser.password)
+    if (!isMatch) {
+      const obj = {
+        status: false,
+        msg: "Invalid password",
+        _data: null
+      }
+      return response.send(obj)
+    }
+
+    if (existingUser.status == false) {
+      const obj = {
+        status: false,
+        msg: "Your account has been deactivated. Please contact support.",
+        _data: null
+      }
+      return response.send(obj)
+    }
+    var token = jwt.sign({ userdata: existingUser }, process.env.secret_key)
+
+    const objectdata = {
+      status: true,
+      msg: "User logged in successfully",
+      _data: existingUser,
+      token: token,
+    }
+    return response.send(objectdata)
+
+  } catch (error) {
     const obj = {
       status: false,
-      msg: "User not found",
+      msg: "Something went wrong",
       _data: null
     }
     return response.send(obj)
   }
-
-  const isMatch = await bcrypt.compare(loginobj.password, existingUser.password)
-  if (!isMatch) {
-    const obj = {
-      status: false,
-      msg: "Invalid password",
-      _data: null
-    }
-    return response.send(obj)
-  }
-
-  if (existingUser.status == false) {
-    const obj = {
-      status: false,
-      msg: "Your account has been deactivated. Please contact support.",
-      _data: null
-    }
-    return response.send(obj)
-  }
-  var token = jwt.sign({ userdata: existingUser }, process.env.secret_key)
-
-  const objectdata = {
-    status: true,
-    msg: "User logged in successfully",
-    _data: existingUser,
-    token: token,
-  }
-  return response.send(objectdata)
 }
 
 exports.getallusers = async (request, response) => {
@@ -122,14 +134,14 @@ exports.getallusers = async (request, response) => {
       status: true,
       msg: "Users fetched successfully",
       _data: users,
-      imagepath:"https://youtube-server-omega.vercel.app/uploads/users/"
+      imagepath: "https://youtube-server-omega.vercel.app/uploads/users/"
     }
     return response.send(obj)
   } catch (error) {
     const obj = {
       status: false,
       msg: "Error fetching users",
-      _data: error
+      _data: null
     }
     return response.send(obj)
   }
@@ -177,7 +189,7 @@ exports.viewProfile = async (request, response) => {
 }
 
 exports.updateprofile = async (request, response) => {
-  
+
   var token = request.headers.authorization;
   if (!token) {
     const obj = {
@@ -201,7 +213,7 @@ exports.updateprofile = async (request, response) => {
       return response.send(obj)
     }
     let updateData = request.body;
-   
+
     let userupdatedata = await user.updateOne(
       {
         _id: userdataid
@@ -221,14 +233,14 @@ exports.updateprofile = async (request, response) => {
     const obj = {
       status: false,
       msg: "Error updating profile",
-      _data: error
+      _data: null
     }
     return response.send(obj)
   }
 }
 
 exports.uploadChannelBanner = async (request, response) => {
- 
+
   let token = request.headers.authorization;
   if (!token) {
     const obj = {
@@ -238,7 +250,7 @@ exports.uploadChannelBanner = async (request, response) => {
     }
     return response.send(obj)
   }
- if (!request.file) {
+  if (!request.file) {
     const obj = {
       status: false,
       msg: "No file provided",
@@ -285,7 +297,7 @@ exports.uploadChannelBanner = async (request, response) => {
     const obj = {
       status: false,
       msg: "Error uploading channel banner",
-      _data: error
+      _data: null
     }
     return response.send(obj)
   }
@@ -377,42 +389,43 @@ exports.changepassword = async (request, response) => {
 };
 
 exports.forgotPassword = async (request, response) => {
-  var email = request.body.email;
-  if (!email) {
-    const obj = {
-      status: false,
-      msg: "Oops! you have not entered the email id. Please enter the email id..!",
-      _data: []
+  try {
+    var email = request.body.email;
+    if (!email) {
+      const obj = {
+        status: false,
+        msg: "Oops! you have not entered the email id. Please enter the email id..!",
+        _data: []
+      }
+      return response.send(obj)
     }
-    return response.send(obj)
-  }
-  var userData = await user.findOne({
-    email: email,
-    deleted_at: ""
-  });
-
-  if (!userData) {
-    return response.send({
-      status: false,
-      msg: "Email does not exists",
-      _data: [],
+    var userData = await user.findOne({
+      email: email,
+      deleted_at: ""
     });
-  }
 
-  var token = jwt.sign({ userdata: userData }, process.env.secret_key, { expiresIn: "0.5h" });
-
-  var transport = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.APP_PASS
+    if (!userData) {
+      return response.send({
+        status: false,
+        msg: "Email does not exists",
+        _data: [],
+      });
     }
-  })
-  var mailOptions = {
-    from: "YouTube Clone",
-    to: userData.email,
-    subject: "Reset Password Link",
-    html: `
+
+    var token = jwt.sign({ userdata: userData }, process.env.secret_key, { expiresIn: "0.5h" });
+
+    var transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.APP_PASS
+      }
+    })
+    var mailOptions = {
+      from: "YouTube Clone",
+      to: userData.email,
+      subject: "Reset Password Link",
+      html: `
       <div className="bg-gray-500 p-5 w-full">
         <div className="bg-white p-3 rounded-md flex flex-col items-center justify-center max-w-[300px]">
           <h1 className="text-[50px] font-bold">Hi ${userData.name}!</h1>
@@ -426,9 +439,7 @@ exports.forgotPassword = async (request, response) => {
         </div>
       </div>
       `
-  }
-
-  try {
+    }
     await transport.sendMail(mailOptions);
     return response.send({
       status: true,
@@ -441,7 +452,7 @@ exports.forgotPassword = async (request, response) => {
     return response.send({
       status: false,
       msg: "Failed to send email. Check server logs.",
-      _data: error,
+      _data: null,
       token: null
     });
   }
@@ -465,7 +476,6 @@ exports.resetPassword = async (request, response) => {
     let userdataid = decoded.userdata._id;
 
     let userData = await user.findOne({ _id: userdataid, deleted_at: null });
-    console.log(userData)
     if (!userData) {
       return response.send({
         status: false,
@@ -509,7 +519,7 @@ exports.resetPassword = async (request, response) => {
     return response.send({
       status: false,
       msg: "Failed to authenticate token or Token may be expired!",
-      _data: error,
+      _data: null,
     });
   }
 };
@@ -548,7 +558,12 @@ exports.incrementpoints = async (request, response) => {
     }
     response.send(obj)
   } catch (error) {
-    console.log(error)
+    const obj = {
+      status: false,
+      msg: "Something went wrong..!",
+      _data: null
+    }
+    response.send(obj)
   }
 }
 
@@ -680,7 +695,7 @@ exports.subscribe = async (request, response) => {
     response.send({
       status: false,
       msg: "Error subscribing to channel",
-      _data: error
+      _data: null
     })
   }
 }
@@ -753,7 +768,7 @@ exports.desubscribe = async (request, response) => {
     const obj = {
       status: false,
       msg: "Something went wrong...!",
-      _data: error
+      _data: null
     }
     return response.send(obj)
   }
@@ -761,36 +776,36 @@ exports.desubscribe = async (request, response) => {
 
 exports.viewprofileById = async (request, response) => {
   try {
-    let viewprofilebyid=request.params.id || request.query.id
-    if(!viewprofilebyid){
-      const obj={
-        status:false,
-        msg:"Not passing this user id...!",
-        _data:''
+    let viewprofilebyid = request.params.id || request.query.id
+    if (!viewprofilebyid) {
+      const obj = {
+        status: false,
+        msg: "Not passing this user id...!",
+        _data: ''
       }
       return response.send(obj)
     }
-    let userfindbyId=await user.findById(viewprofilebyid).populate('videoIds').populate('subscribed_channels').populate('playlist')
-    if(!userfindbyId){
-      const obj={
-        status:false,
-        msg:"Not available this user...!",
-        _data:''
+    let userfindbyId = await user.findById(viewprofilebyid).populate('videoIds').populate('subscribed_channels').populate('playlist')
+    if (!userfindbyId) {
+      const obj = {
+        status: false,
+        msg: "Not available this user...!",
+        _data: ''
       }
       return response.send(obj)
     }
-    const obj={
-      status:true,
-      msg:"User Found...!",
-      _data:userfindbyId,
-      imagepath:"https://youtube-server-omega.vercel.app/uploads/users/"
+    const obj = {
+      status: true,
+      msg: "User Found...!",
+      _data: userfindbyId,
+      imagepath: "https://youtube-server-omega.vercel.app/uploads/users/"
     }
     return response.send(obj)
   } catch (error) {
-    const obj={
-      status:false,
-      msg:"Something went wrong...!",
-      _data:error
+    const obj = {
+      status: false,
+      msg: "Something went wrong...!",
+      _data: null
     }
     return response.send(obj)
   }

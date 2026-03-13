@@ -1,4 +1,3 @@
-
 const downloads = require("../Models/Download");
 const PlaylistSchema = require("../Models/Playlist");
 const user = require("../Models/User_Auth");
@@ -53,11 +52,11 @@ exports.uploadvideo = async (req, res) => {
     }
     return res.send(obj)
   } catch (error) {
-    
+
     return res.send({
       status: false,
       msg: "Something went wrong..!",
-      _data: error
+      _data: null
     })
   }
 };
@@ -98,11 +97,11 @@ exports.getallvideos = async (request, response) => {
     };
     return response.send(obj);
   } catch (error) {
-    
+
     return response.send({
       status: false,
       msg: "Something went wrong while fetching videos",
-      _data: error
+      _data: null
     });
   }
 }
@@ -157,7 +156,7 @@ exports.getSearchedVideos = async (req, res) => {
     return res.send({
       status: false,
       msg: "Something went wrong..!",
-      _data: error
+      _data: null
     })
   }
 }
@@ -194,7 +193,7 @@ exports.viewVideo = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something went wrong",
-      _data: error
+      _data: null
     })
   }
 }
@@ -246,7 +245,7 @@ exports.addComments = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something went wrong...!",
-      _data: error
+      _data: null
     })
   }
 }
@@ -332,7 +331,7 @@ exports.incrementsLike = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something went wrong...!",
-      _data: error
+      _data: null
     })
   }
 };
@@ -407,7 +406,7 @@ exports.decrementsLike = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something went wrong...!",
-      _data: error
+      _data: null
     })
   }
 };
@@ -455,7 +454,7 @@ exports.createPlaylist = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something went wrong...!",
-      _data: error
+      _data: null
     })
   }
 }
@@ -499,7 +498,7 @@ exports.viewAllPlaylistByUserId = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something went wrong...!",
-      _data: error
+      _data: null
     })
   }
 }
@@ -562,7 +561,7 @@ exports.updatePlaylist = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something went wrong...!",
-      _data: error
+      _data: null
     })
   }
 }
@@ -599,7 +598,7 @@ exports.viewAllVideosInPlaylist = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something wentwrong...!",
-      _data: error
+      _data: null
     })
   }
 }
@@ -671,7 +670,7 @@ exports.deleteVideosInPlaylist = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something went wrong...!",
-      _data: error
+      _data: null
     })
   }
 
@@ -720,7 +719,7 @@ exports.deletePlaylist = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something went wrong...!",
-      _data: error
+      _data: null
     })
   }
 }
@@ -773,7 +772,7 @@ exports.deleteVideo = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something went wrong...!",
-      _data: error
+      _data: null
     })
   }
 }
@@ -882,7 +881,7 @@ exports.addVideosInwatchLater = async (request, response) => {
     return response.send({
       status: false,
       msg: "Somethg went wrong...!",
-      _data: error
+      _data: null
     })
   }
 }
@@ -975,7 +974,7 @@ exports.updateWatchlater = async (request, response) => {
     return response.send({
       status: false,
       msg: "Somethg went wrong...!",
-      _data: error
+      _data: null
     })
   }
 
@@ -1147,36 +1146,21 @@ exports.downloadVideo = async (request, response) => {
       return response.send(obj)
     }
 
-    response.download(
-      `C:/Users/saura/OneDrive/Documents/Internship/server/uploads/videos/videofile/${existingvideo.videofile}`,
-      existingvideo.videofile,
-      async (error) => {
-        if (error) {
-          if (!response.headersSent) {
-            return response.send({
-              status: false,
-              msg: "Error downloading video",
-              _data: error,
-            })
-          }
-        } else {
-          const inserDownloadData = await downloads({ userId: userid, videoid: videoid })
-          const savedata = await inserDownloadData.save()
-          const obj = {
-            status: true,
-            msg: "Video Downloaded Successfully...!",
-            _data: savedata
-          }
-          return response.send(obj)
-        }
-      }
-    )
+
+    const inserDownloadData = await downloads({ userId: userid, videoid: videoid })
+    const savedata = await inserDownloadData.save()
+    const obj = {
+      status: true,
+      msg: "Video Downloaded Successfully...!",
+      _data: savedata
+    }
+    return response.send(obj)
 
   } catch (error) {
     return response.send({
       status: false,
       msg: "Something went wrong...!",
-      _data: error
+      _data: null
     })
   }
 }
@@ -1224,7 +1208,7 @@ exports.viewDownloadedVideo = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something went wrong...!",
-      _data: error
+      _data: null
     })
   }
 }
@@ -1273,7 +1257,7 @@ exports.incrementVideoViews = async (request, response) => {
     return response.send({
       status: false,
       msg: "Something went wrong while incrementing video views",
-      _data: error
+      _data: null
     })
   }
 }

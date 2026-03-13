@@ -39,7 +39,7 @@ module.exports = (app) => {
 
     authRouter.post('/viewProfileById',uploadimage.none(),viewprofileById)
 
-    authRouter.post('/update-profile', bannerimagupload, updateprofile)
+    authRouter.post('/update-profile', singleimage, updateprofile)
 
     authRouter.post('/upload-channel-banner', bannerimagupload, uploadChannelBanner)
 
