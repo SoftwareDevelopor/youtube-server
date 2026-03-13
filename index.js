@@ -19,7 +19,11 @@ app.use(bodyparser.json({limit: 125000000})) //
 app.use(express.json({limit: 125000000})) // Increase JSON payload limit
 app.use(express.urlencoded({ extended: true, limit: 125000000 })) // Increase URL-encoded payload limit
 app.use(cors({
-  origin: ['https://vidshare-khaki.vercel.app/','https://vidshare-khaki.vercel.app']
+  origin: ['https://vidshare-khaki.vercel.app/','https://vidshare-khaki.vercel.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
 }))
 
 
