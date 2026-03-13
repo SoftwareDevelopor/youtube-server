@@ -29,7 +29,7 @@ exports.uploadvideo = async (req, res) => {
     data.thumbnail = req.files.thumbnail[0].filename
     data.videofile = req.files.videofile[0].filename
   }
-  let userdata = await data.videouploader
+  let userdata = data.videouploader
   try {
     const insertdata = await video(data)
     let videoid = insertdata._id.toString()
@@ -389,24 +389,25 @@ exports.decrementsLike = async (request, response) => {
 };
 
 exports.createPlaylist = async (request, response) => {
-  if (!request || !request.body) {
-    const obj = {
-      status: false,
-      msg: "No video data is provided to the playlist...!",
-      _data: null
-    }
-    return response.send(obj)
-  }
-
-  let data = request.body
-
-  data.userId = request.params.id || request.query.id
-
-  if (request.files) {
-    data.image = request.files.image[0].filename
-  }
 
   try {
+    if (!request || !request.body) {
+      const obj = {
+        status: false,
+        msg: "No video data is provided to the playlist...!",
+        _data: null
+      }
+      return response.send(obj)
+    }
+
+    let data = request.body
+
+    data.userId = request.params.id || request.query.id
+
+    if (request.files) {
+      data.image = request.files.image[0].filename
+    }
+
     let insertPlaylistData = await PlaylistSchema(data)
 
     await user.findByIdAndUpdate(
@@ -757,103 +758,104 @@ exports.deleteVideo = async (request, response) => {
 }
 
 exports.addVideosInwatchLater = async (request, response) => {
-  let videoidInWatchlater = request.body.VIDEOID
 
-  let userid = request.params.id || request.query.id
+  try {
 
-  if (!userid) {
-    const obj = {
-      status: false,
-      msg: "Not passing the user details...!",
-      _data: ''
-    }
-    return response.send(obj)
-  }
+    let videoidInWatchlater = request.body.VIDEOID
 
-  if (!videoidInWatchlater) {
-    const obj = {
-      status: false,
-      msg: "No any video id is passing to the watch later...!",
-      _data: ''
-    }
-    return response.send(obj)
-  }
+    let userid = request.params.id || request.query.id
 
-  let existingvideo = await video.findById(videoidInWatchlater).populate('videouploader')
-  // console.log("existed video:-- ",existingvideo)
-  if (!existingvideo) {
-    const obj = {
-      status: false,
-      msg: "Video Not Available....! ",
-      _data: {}
-    }
-    return response.send(obj)
-  }
-
-  let existinguser = await user.findById(userid)
-  // console.log("\nexisted user:-- ",existinguser)
-
-  if (!existinguser) {
-    const obj = {
-      status: false,
-      msg: "User Not Available....! ",
-      _data: {}
-    }
-    return response.send(obj)
-  }
-
-  let existwatchlater = await WatchLaterSchema.findOne({ userId: userid })
-
-  let existWatchlaterVideo = await WatchLaterSchema.findOne({ videos: videoidInWatchlater })
-
-  let existingWatchLater = await WatchLaterSchema.findOne({ userId: userid, videos: videoidInWatchlater })
-
-  if (!existWatchlaterVideo) {
-    const obj = {
-      status: false,
-      msg: "Video does not found in this watch later...!",
-      _data: null
-    }
-    return response.send(obj)
-  }
-
-  if (existwatchlater) {
-    if (!existingWatchLater) {
-      let updatewatchlaterbyuserid = await WatchLaterSchema.findOneAndUpdate(
-        {
-          userId: userid
-        },
-        {
-          $addToSet: {
-            videos: videoidInWatchlater
-          }
-        }
-      ).populate('userId').populate('videos')
+    if (!userid) {
       const obj = {
-        status: true,
-        msg: "Video Update in the Watch Later...!",
-        _data: updatewatchlaterbyuserid
+        status: false,
+        msg: "Not passing the user details...!",
+        _data: ''
       }
       return response.send(obj)
     }
-  }
 
-  if (existingWatchLater) {
-    const obj = {
-      status: false,
-      msg: "Video Is Already Added in Watch later...!",
-      _data: ''
+    if (!videoidInWatchlater) {
+      const obj = {
+        status: false,
+        msg: "No any video id is passing to the watch later...!",
+        _data: ''
+      }
+      return response.send(obj)
     }
-    return response.send(obj)
 
-  }
+    let existingvideo = await video.findById(videoidInWatchlater).populate('videouploader')
+    // console.log("existed video:-- ",existingvideo)
+    if (!existingvideo) {
+      const obj = {
+        status: false,
+        msg: "Video Not Available....! ",
+        _data: {}
+      }
+      return response.send(obj)
+    }
 
-  let data = {
-    userId: userid,
-    videos: videoidInWatchlater
-  }
+    let existinguser = await user.findById(userid)
+    // console.log("\nexisted user:-- ",existinguser)
 
-  try {
+    if (!existinguser) {
+      const obj = {
+        status: false,
+        msg: "User Not Available....! ",
+        _data: {}
+      }
+      return response.send(obj)
+    }
+
+    let existwatchlater = await WatchLaterSchema.findOne({ userId: userid })
+
+    let existWatchlaterVideo = await WatchLaterSchema.findOne({ videos: videoidInWatchlater })
+
+    let existingWatchLater = await WatchLaterSchema.findOne({ userId: userid, videos: videoidInWatchlater })
+
+    if (!existWatchlaterVideo) {
+      const obj = {
+        status: false,
+        msg: "Video does not found in this watch later...!",
+        _data: null
+      }
+      return response.send(obj)
+    }
+
+    if (existwatchlater) {
+      if (!existingWatchLater) {
+        let updatewatchlaterbyuserid = await WatchLaterSchema.findOneAndUpdate(
+          {
+            userId: userid
+          },
+          {
+            $addToSet: {
+              videos: videoidInWatchlater
+            }
+          }
+        ).populate('userId').populate('videos')
+        const obj = {
+          status: true,
+          msg: "Video Update in the Watch Later...!",
+          _data: updatewatchlaterbyuserid
+        }
+        return response.send(obj)
+      }
+    }
+
+    if (existingWatchLater) {
+      const obj = {
+        status: false,
+        msg: "Video Is Already Added in Watch later...!",
+        _data: ''
+      }
+      return response.send(obj)
+
+    }
+
+    let data = {
+      userId: userid,
+      videos: videoidInWatchlater
+    }
 
     let videoinsertwatchlater = await WatchLaterSchema(data)
     let result = await videoinsertwatchlater.save()

@@ -425,21 +425,33 @@ exports.forgotPassword = async (request, response) => {
       to: userData.email,
       subject: "Reset Password Link",
       html: `
-      <div className="bg-gray-500 p-5 w-full">
-        <div className="bg-white p-3 rounded-md flex flex-col items-center justify-center max-w-[300px]">
-          <h1 className="text-[50px] font-bold">Hi ${userData.name}!</h1>
-          <p className="text-[30px] font-semibold mt-[15px]">Password Reset Link</p>
-          <p className="text-[20px] mt-[10px]">You requested to reset your password. Click the link below to proceed:</p>
+      <div style="background-color: #f9f9f9; padding: 20px; font-family: Arial, sans-serif;">
+        
+        <div style="background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 400px; margin: auto;">
+          <h1 style="font-size: 24px; color: #333; text-align: center; margin-bottom: 20px;">Hi ${userData.name}!</h1>
+          <p style="font-size:30px; font-weight: bold; margin-bottom: 10px">Password Reset Link</p>
+          <p style="font-size: 18px; color: #666; margin-bottom: 20px;">You requested to reset your password. Click the link below to proceed:</p>
           <a href=${process.env.FRONTEND_URL}/reset-password?token=${token}>
-            <button className="mt-[15px] px-[25px] py-3 bg-[#4CAF50] text-white">Reset Password</button>
+            <button style="padding: 10px 20px; background-color: #007bff; color: #fff; border: none; border-radius: 30px; cursor: pointer;">
+              Reset Password
+            </button>
           </a>
-          <p className="mt-[15px] text-[20px] text-[#666]">This link will expire in 2 hours.</p>
-          <p className="mt-5">Best regards,<br/>The YouTube Content Creator Team</p>
+          <p style="font-size: 18px; color: #666; margin-bottom: 20px;">If you did not request a password reset, please ignore this email.</p>
+          <p style="font-size: 18px; color: #666; margin-bottom: 20px;">Best regards,<br/>The YouTube Content Creator Team</p>
         </div>
       </div>
       `
     }
-    await transport.sendMail(mailOptions);
+
+    await new Promise((resolve, reject) => {
+      transport.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(info);
+        }
+      });
+    });
     return response.send({
       status: true,
       msg: "Forgot password process initiated. Email is Sent ! Please check your email.",
@@ -523,57 +535,14 @@ exports.resetPassword = async (request, response) => {
   }
 };
 
-// exports.incrementpoints = async (request, response) => {
-//   try {
-//     const id = request.params.id || request.query.id
-//     if (!id) {
-//       const obj = {
-//         status: false,
-//         msg: "No any user id found..!",
-//         _data: null
-//       }
-//       return response.send(obj)
-//     }
-
-//     const userdata = await user.findByIdAndUpdate(
-//       {
-//         _id: id
-//       }, {
-//       $inc: { increment_points: 5 }
-//     }
-//     )
-//     if (!userdata) {
-//       const obj = {
-//         status: false,
-//         msg: "No any user found..!",
-//         _data: null
-//       }
-//       response.send(obj)
-//     }
-//     const obj = {
-//       status: true,
-//       msg: "Points Incremented by 5",
-//       _data: userdata
-//     }
-//     response.send(obj)
-//   } catch (error) {
-//     const obj = {
-//       status: false,
-//       msg: "Something went wrong..!",
-//       _data: null
-//     }
-//     response.send(obj)
-//   }
-// }
-
 exports.subscribe = async (request, response) => {
   try {
     // ID of the user whom have to subscribe
 
     let subscriberUserId = request.params.id || request.query.id
-    
+
     // IDs of channel who are subscribing to the channel
-    
+
     let channelIdsToSubscribe = request.body.channel_ids
 
     if (!subscriberUserId) {
@@ -670,20 +639,24 @@ exports.subscribe = async (request, response) => {
       `
     };
 
-    await transporter.sendMail(mailOptions, (error) => {
-      if (error) {
-        return response.send({
-          status: false,
-          msg: "Channel subscribed successfully, but failed to send email notification.",
-          _data: null
-        })
-      } else {
-        return response.send({
-          status: true,
-          msg: "Channel subscribed successfully, and email notification sent.",
-          _data: null
-        })
-      }
+    await new Promise((resolve, reject) => {
+      transporter.sendMail(mailOptions, (error) => {
+        if (error) {
+          reject(error);
+          return response.send({
+            status: false,
+            msg: "Channel subscribed successfully, but failed to send email notification.",
+            _data: null
+          })
+        } else {
+          resolve();
+          return response.send({
+            status: true,
+            msg: "Channel subscribed successfully, and email notification sent.",
+            _data: null
+          })
+        }
+      });
     });
 
     const obj = {
@@ -811,6 +784,49 @@ exports.viewprofileById = async (request, response) => {
     return response.send(obj)
   }
 }
+
+// exports.incrementpoints = async (request, response) => {
+//   try {
+//     const id = request.params.id || request.query.id
+//     if (!id) {
+//       const obj = {
+//         status: false,
+//         msg: "No any user id found..!",
+//         _data: null
+//       }
+//       return response.send(obj)
+//     }
+
+//     const userdata = await user.findByIdAndUpdate(
+//       {
+//         _id: id
+//       }, {
+//       $inc: { increment_points: 5 }
+//     }
+//     )
+//     if (!userdata) {
+//       const obj = {
+//         status: false,
+//         msg: "No any user found..!",
+//         _data: null
+//       }
+//       response.send(obj)
+//     }
+//     const obj = {
+//       status: true,
+//       msg: "Points Incremented by 5",
+//       _data: userdata
+//     }
+//     response.send(obj)
+//   } catch (error) {
+//     const obj = {
+//       status: false,
+//       msg: "Something went wrong..!",
+//       _data: null
+//     }
+//     response.send(obj)
+//   }
+// }
 
 // // Check if user has a free download left for today
 // exports.hasFreeDownloadToday = async (req, res) => {
