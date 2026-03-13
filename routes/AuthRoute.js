@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, viewProfile, updateprofile, changepassword, forgotPassword, resetPassword, incrementpoints, subscribe, uploadChannelBanner, getallusers, desubscribe, viewprofileById } = require('../Controllers/AuthController');
+const { register, login, viewProfile, updateprofile, changepassword, forgotPassword, resetPassword, subscribe, uploadChannelBanner, getallusers, desubscribe, viewprofileById } = require('../Controllers/AuthController');
 const authRouter = express.Router();
 const multer = require('multer')
 const path = require('path');
@@ -48,8 +48,6 @@ module.exports = (app) => {
     authRouter.post('/forgot-password', uploadimage.none(), forgotPassword)
 
     authRouter.post('/reset-password', uploadimage.none(), resetPassword)
-
-    authRouter.post('/increment-points', uploadimage.none(), incrementpoints)
 
     authRouter.post('/subscribe', uploadimage.none(),subscribe)
 
