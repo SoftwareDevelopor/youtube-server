@@ -67,7 +67,6 @@ exports.login = async (request, response) => {
 
   try {
 
-
     let loginobj = {
       email: request.body.email,
       password: request.body.password
@@ -378,7 +377,7 @@ exports.changepassword = async (request, response) => {
       msg: "Password changed successfully",
       _data: userupdatedata,
     };
-    response.send(result);
+    return response.send(result);
   } catch (error) {
     return response.send({
       status: false,
@@ -412,7 +411,7 @@ exports.forgotPassword = async (request, response) => {
       });
     }
 
-    var token = jwt.sign({ userdata: userData }, process.env.secret_key, { expiresIn: "0.5h" });
+    var token = jwt.sign({ userdata: userData }, process.env.secret_key, { expiresIn: "2h" });
 
     var transport = nodemailer.createTransport({
       service: "gmail",
@@ -514,7 +513,7 @@ exports.resetPassword = async (request, response) => {
       msg: "Password reset successfully",
       _data: userupdatedata,
     };
-    response.send(result);
+    return response.send(result);
   } catch (error) {
     return response.send({
       status: false,
@@ -524,54 +523,57 @@ exports.resetPassword = async (request, response) => {
   }
 };
 
-exports.incrementpoints = async (request, response) => {
-  try {
-    const id = request.params.id || request.query.id
-    if (!id) {
-      const obj = {
-        status: false,
-        msg: "No any user id found..!",
-        _data: null
-      }
-      return response.send(obj)
-    }
+// exports.incrementpoints = async (request, response) => {
+//   try {
+//     const id = request.params.id || request.query.id
+//     if (!id) {
+//       const obj = {
+//         status: false,
+//         msg: "No any user id found..!",
+//         _data: null
+//       }
+//       return response.send(obj)
+//     }
 
-    const userdata = await user.findByIdAndUpdate(
-      {
-        _id: id
-      }, {
-      $inc: { increment_points: 5 }
-    }
-    )
-    if (!userdata) {
-      const obj = {
-        status: false,
-        msg: "No any user found..!",
-        _data: null
-      }
-      response.send(obj)
-    }
-    const obj = {
-      status: true,
-      msg: "Points Incremented by 5",
-      _data: userdata
-    }
-    response.send(obj)
-  } catch (error) {
-    const obj = {
-      status: false,
-      msg: "Something went wrong..!",
-      _data: null
-    }
-    response.send(obj)
-  }
-}
+//     const userdata = await user.findByIdAndUpdate(
+//       {
+//         _id: id
+//       }, {
+//       $inc: { increment_points: 5 }
+//     }
+//     )
+//     if (!userdata) {
+//       const obj = {
+//         status: false,
+//         msg: "No any user found..!",
+//         _data: null
+//       }
+//       response.send(obj)
+//     }
+//     const obj = {
+//       status: true,
+//       msg: "Points Incremented by 5",
+//       _data: userdata
+//     }
+//     response.send(obj)
+//   } catch (error) {
+//     const obj = {
+//       status: false,
+//       msg: "Something went wrong..!",
+//       _data: null
+//     }
+//     response.send(obj)
+//   }
+// }
 
 exports.subscribe = async (request, response) => {
   try {
     // ID of the user whom have to subscribe
+
     let subscriberUserId = request.params.id || request.query.id
+    
     // IDs of channel who are subscribing to the channel
+    
     let channelIdsToSubscribe = request.body.channel_ids
 
     if (!subscriberUserId) {
@@ -668,7 +670,7 @@ exports.subscribe = async (request, response) => {
       `
     };
 
-    await transporter.sendMail(mailOptions, (error, info) => {
+    await transporter.sendMail(mailOptions, (error) => {
       if (error) {
         return response.send({
           status: false,
@@ -684,15 +686,14 @@ exports.subscribe = async (request, response) => {
       }
     });
 
-
     const obj = {
       status: true,
       msg: "Channel subscribed successfully..!",
       _data: updatedSubscriber,
     }
-    response.send(obj)
+    return response.send(obj)
   } catch (error) {
-    response.send({
+    return response.send({
       status: false,
       msg: "Error subscribing to channel",
       _data: null
@@ -763,7 +764,7 @@ exports.desubscribe = async (request, response) => {
       msg: "Channel desubscribed successfully..!",
       _data: updatedChannelUser
     }
-    response.send(obj)
+    return response.send(obj)
   } catch (error) {
     const obj = {
       status: false,

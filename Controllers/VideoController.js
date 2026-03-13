@@ -64,21 +64,6 @@ exports.uploadvideo = async (req, res) => {
 exports.getallvideos = async (request, response) => {
   try {
     // Fetch all videos and populate the videochannel field to get channel details
-    var filter = {}
-    if (request.body != undefined) {
-      if (request.body.searchedText != undefined || request.body.searchedText != '') {
-        filter = {
-          $or: [
-            {
-              videotitle: new RegExp(searchtext, 'i')
-            },
-            {
-              video_tags: new RegExp(searchtext, 'i')
-            }
-          ]
-        }
-      }
-    }
 
     const videos = await video.find(filter).populate("videouploader");
 
@@ -108,28 +93,20 @@ exports.getallvideos = async (request, response) => {
 
 exports.getSearchedVideos = async (req, res) => {
   try {
-    const searchtext = req.body.searchedText
-    if (!searchtext) {
-      return res.send(
-        {
-          status: false,
-          msg: "No search text provided..!",
-          _data: null
+
+    var filter = {}
+    if (req.body != undefined) {
+      if (req.body.searchedText != undefined || req.body.searchedText != '') {
+        filter = {
+          $or: [
+            {
+              videotitle: new RegExp(searchtext, 'i')
+            },
+            {
+              video_tags: new RegExp(searchtext, 'i')
+            }
+          ]
         }
-      )
-    }
-
-
-    if (searchtext) {
-      filter = {
-        $or: [
-          {
-            videotitle: new RegExp(searchtext, 'i')
-          },
-          {
-            video_tags: new RegExp(searchtext, 'i')
-          }
-        ]
       }
     }
 
@@ -199,20 +176,20 @@ exports.viewVideo = async (request, response) => {
 }
 
 exports.addComments = async (request, response) => {
-  let videoId = request.params.id || request.query.id
-
-  let comments = request.body.comments
-
-  if (!videoId) {
-    const obj = {
-      status: false,
-      msg: "Not sending the video id...!",
-      _data: ''
-    }
-    return response.send(obj)
-  }
 
   try {
+    let videoId = request.params.id || request.query.id
+
+    let comments = request.body.comments
+
+    if (!videoId) {
+      const obj = {
+        status: false,
+        msg: "Not sending the video id...!",
+        _data: ''
+      }
+      return response.send(obj)
+    }
 
     let existingVideo = await video.findById(videoId).populate("videouploader")
 
@@ -486,6 +463,7 @@ exports.viewAllPlaylistByUserId = async (request, response) => {
         msg: "No any playlist available...!",
         _data: []
       }
+      return response.send(obj)
     }
     const obj = {
       status: true,
@@ -557,6 +535,7 @@ exports.updatePlaylist = async (request, response) => {
       imagepath: "https://youtube-server-omega.vercel.app/uploads/videos/playlists/"
     }
     return response.send(obj)
+
   } catch (error) {
     return response.send({
       status: false,
@@ -597,7 +576,7 @@ exports.viewAllVideosInPlaylist = async (request, response) => {
   } catch (error) {
     return response.send({
       status: false,
-      msg: "Something wentwrong...!",
+      msg: "Something went wrong...!",
       _data: null
     })
   }
@@ -709,7 +688,7 @@ exports.deletePlaylist = async (request, response) => {
     ).populate('videoids').populate('userId')
 
     const obj = {
-      status: false,
+      status: true,
       msg: "Playlist Deleted Successfully...!",
       _data: deleteplaylist
     }
@@ -828,6 +807,15 @@ exports.addVideosInwatchLater = async (request, response) => {
   let existWatchlaterVideo = await WatchLaterSchema.findOne({ videos: videoidInWatchlater })
 
   let existingWatchLater = await WatchLaterSchema.findOne({ userId: userid, videos: videoidInWatchlater })
+
+  if (!existWatchlaterVideo) {
+    const obj = {
+      status: false,
+      msg: "Video does not found in this watch later...!",
+      _data: null
+    }
+    return response.send(obj)
+  }
 
   if (existwatchlater) {
     if (!existingWatchLater) {
