@@ -2,7 +2,7 @@
 
 ## Base URL
 ```
-https://youtube-server-omega.vercel.app/
+https://youtube-server-all.up.railway.app/
 ```
 
 ## Authentication Endpoints
