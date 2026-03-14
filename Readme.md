@@ -2,7 +2,7 @@
 
 ## Base URL
 ```
-https://youtube-server-all.up.railway.app/
+https://youtube-server-a5ha.onrender.com/
 ```
 
 ## Authentication Endpoints

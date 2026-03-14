@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const app = express();
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://vidshare-khaki.vercel.app'); // Allow only your frontend origin
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Specify allowed methods
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); // Specify allowed methods
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Specify allowed headers
   next();
 });
@@ -19,11 +19,9 @@ app.use(bodyparser.json({limit: 125000000})) //
 app.use(express.json({limit: 125000000})) // Increase JSON payload limit
 app.use(express.urlencoded({ extended: true, limit: 125000000 })) // Increase URL-encoded payload limit
 app.use(cors({
-  origin: ['https://vidshare-khaki.vercel.app/','https://vidshare-khaki.vercel.app'],
+  origin: ['https://vidshare-khaki.vercel.app/','https://vidshare-khaki.vercel.app', 'http://localhost:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  optionsSuccessStatus: 200
 }))
 
 
