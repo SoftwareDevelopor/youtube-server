@@ -65,7 +65,7 @@ exports.getallvideos = async (request, response) => {
   try {
     // Fetch all videos and populate the videochannel field to get channel details
 
-    const videos = await video.find(filter).populate("videouploader");
+    const videos = await video.find().populate("videouploader");
 
     if (!videos || videos.length === 0) {
       return response.send({
