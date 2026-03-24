@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, viewProfile, updateprofile, changepassword, forgotPassword, resetPassword, subscribe, uploadChannelBanner, getallusers, desubscribe, viewprofileById } = require('../Controllers/AuthController');
+const { register, login, viewProfile, updateprofile, changepassword, forgotPassword, resetPassword, subscribe, uploadChannelBanner, getallusers, desubscribe, viewprofileById, deleteUser } = require('../Controllers/AuthController');
 const authRouter = express.Router();
 const multer = require('multer')
 const path = require('path');
@@ -36,6 +36,8 @@ module.exports = (app) => {
     authRouter.post('/getallusers', uploadimage.none(), getallusers)
 
     authRouter.post('/view-profile', uploadimage.none(), viewProfile)
+
+    authRouter.post('/delete-user',uploadimage.none(),deleteUser)
 
     authRouter.post('/viewProfileById',uploadimage.none(),viewprofileById)
 

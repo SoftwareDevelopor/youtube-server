@@ -785,6 +785,56 @@ exports.viewprofileById = async (request, response) => {
   }
 }
 
+exports.deleteUser = async (request, response) => {
+  var token = request.headers.authorization;
+  if (!token) {
+    const obj = {
+      status: false,
+      msg: "No token provided",
+      _data: null
+    }
+    return response.send(obj)
+  }
+  try {
+    var token = token.split(" ")[1];
+    var decoded = jwt.verify(token, process.env.secret_key);
+    var userdataid = decoded.userdata._id;
+    var userdata = await user.findOne({ _id: userdataid, deleted_at: null });
+    if (!userdata) {
+      const obj = {
+        status: false,
+        msg: "User not found",
+        _data: null
+      }
+      return response.send(obj)
+    }
+
+    let deleteuser=await user.updateOne(
+      {
+        _id: userdataid
+      },
+      {
+        $set: { deleted_at: new Date() }
+      }
+    )
+    const objectdata = {
+      status: true,
+      msg: "User deleted successfully",
+      _data: deleteuser,
+      token: token,
+    }
+    return response.send(objectdata)
+  }
+  catch (error) {
+    const obj = {
+      status: false,
+      msg: "Invalid token",
+      _data: null
+    }
+    return response.send(obj)
+  }
+}
+
 // exports.incrementpoints = async (request, response) => {
 //   try {
 //     const id = request.params.id || request.query.id
